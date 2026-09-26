@@ -35,7 +35,8 @@ Stalls must return DeadlineExceeded; interruption/malformed records must return
 TlsFailure or TransportFailure. Each failure is followed by a healthy loopback
 HTTP request using the same adapter. No certificate verification is disabled.
 
-Two additional tests are opt-in and appear as skipped in the normal suite.
+The two soak tests are opt-in and appear as skipped in the normal suite; two
+additional certificate-fixture tests are run by the separate certificate runner.
 The Linux runner enables them together:
 
 ```sh
@@ -44,9 +45,9 @@ python3 scripts/soak.py --zig /path/to/zig --seconds 300 --report soak-report.js
 
 Requirements: Zig 0.16.0, Python 3, OpenSSL CLI, Linux `/proc`, and permission to
 open loopback sockets. The script generates a temporary self-signed certificate
-with a matching loopback IP SAN. The SDK must reject it with TlsFailure using
-normal system trust. Recovery is checked against plain HTTP; a successful
-trusted TLS control is not included. Temporary private keys are deleted with
+with a matching localhost DNS SAN. The SDK must reject it with TlsFailure using
+normal system trust. This older soak recovery check uses plain HTTP; the separate
+[certificate suite](tls-certificates.md) adds trusted HTTPS controls and recovery. Temporary private keys are deleted with
 the test directory and are never committed.
 
 The soak repeatedly executes the existing 84-exchange lifecycle worker in one
@@ -63,7 +64,7 @@ samples. Child execution is bounded by requested duration plus 60 seconds for
 warm-up/cleanup; compile time is outside that budget. Duration can be 30–86,400
 seconds. Start with a short run before an hours-long campaign.
 
-Still outstanding: trusted local CA controls for hostname/expiry failures,
-TLS-specific allocation failure injection, successful TLS recovery, DNS faults,
-multi-hour soak evidence, and other platforms. The soak repeats sequential
+Trusted CA controls, hostname/expiry failures, TLS allocation failure injection,
+and HTTPS recovery are now covered by the separate certificate suite. DNS faults,
+multi-hour soak evidence, and other platforms remain outstanding. The soak repeats sequential
 workers; the separate normal suite covers four concurrent adapters.

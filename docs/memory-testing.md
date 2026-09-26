@@ -57,3 +57,7 @@ The allocation sweep covers allocator calls on one plain HTTP success path,
 not TLS/certificate loading, every HTTP error path, resize-failure injection,
 or allocations internal to the I/O runtime. Race stress, sustained resource
 monitoring, larger inputs, additional seeds, and TLS failure injection remain.
+
+The newer [certificate suite](tls-certificates.md) additionally sweeps CA loading
+and TLS connection allocations. The plain HTTP sweep limits above describe the
+original campaign, not the full current test coverage.

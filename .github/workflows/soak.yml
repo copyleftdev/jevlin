@@ -42,6 +42,12 @@ jobs:
             *) echo 'Unsupported duration'; exit 2 ;;
           esac
           python3 -u scripts/soak.py --seconds "$SOAK_SECONDS" --report soak-report.json 2>&1 | tee soak.log
+      - name: Verify TLS certificate matrix
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -u scripts/tls.py --optimize ReleaseSafe --report tls-report.json 2>&1 | tee tls.log
       - name: Summarize results
         if: always()
         shell: bash
@@ -58,6 +64,9 @@ jobs:
                   out.write('\nFull samples and test output are in the report artifact.\n')
               else:
                   out.write('No completed report. Check the uploaded log for setup errors or interruption.\n')
+              tls = pathlib.Path('tls-report.json')
+              if tls.exists():
+                  out.write(f"\nTLS certificate tests passed: {json.loads(tls.read_text())['passed']}\n")
           PY
       - name: Upload report and log
         if: always()
@@ -67,5 +76,7 @@ jobs:
           path: |
             soak-report.json
             soak.log
+            tls-report.json
+            tls.log
           if-no-files-found: warn
           retention-days: 30

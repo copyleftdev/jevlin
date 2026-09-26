@@ -59,7 +59,7 @@ can extend elapsed time beyond the configured deadline.
   analysis have not been audited against the original Power of Ten rules.
 - Linux is the validated platform for this cut. Bounded mutation campaigns and
   loopback HTTP allocation-failure injection are covered in [memory testing](memory-testing.md).
-  Cross-platform behavior, load, TLS allocation failures, coverage-guided fuzzing,
+  Cross-platform behavior, load, coverage-guided fuzzing,
   and long-duration cancellation stress remain work before a production-readiness claim.
   Short [transport lifecycle stress tests](transport-testing.md) cover real loopback
   disconnects, stalls, cancellation, concurrent adapters, and retry recovery.
@@ -78,3 +78,6 @@ best-effort parsed JSON. Error parsing failures preserve the original status err
 
 The initial live verification used the official endpoint and `jev-latest`, which
 returned `jev-1.13.0`. Text helpers and structured question helpers are now both implemented.
+
+[Certificate tests](tls-certificates.md) now cover isolated trusted roots,
+rejection cases, HTTPS recovery, and TLS allocation-failure injection.

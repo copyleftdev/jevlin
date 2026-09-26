@@ -15,3 +15,12 @@ jobs:
           version: 0.16.0
       - run: zig build check -Doptimize=${{ matrix.optimize }}
       - run: python3 scripts/compile_fail.py "$(command -v zig)"
+      - name: Verify TLS certificates and allocation recovery
+        run: python3 scripts/tls.py --optimize=${{ matrix.optimize }} --report tls-report.json
+      - name: Upload TLS report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tls-${{ matrix.optimize }}
+          path: tls-report.json
+          if-no-files-found: warn

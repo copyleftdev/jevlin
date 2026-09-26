@@ -29,7 +29,7 @@ with tempfile.TemporaryDirectory(prefix='jevlin-soak-') as temporary:
     subprocess.run(['openssl', 'req', '-x509', '-newkey', 'rsa:2048', '-nodes',
                     '-keyout', str(temp / 'key.pem'), '-out', str(temp / 'cert.pem'),
                     '-days', '1', '-subj', '/CN=localhost',
-                    '-addext', 'subjectAltName=IP:127.0.0.1'],
+                    '-addext', 'subjectAltName=DNS:localhost'],
                    check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     context.load_cert_chain(temp / 'cert.pem', temp / 'key.pem')
@@ -59,7 +59,7 @@ with tempfile.TemporaryDirectory(prefix='jevlin-soak-') as temporary:
     server.start()
     env = os.environ.copy()
     env['JEVLIN_SOAK_SECONDS'] = str(a.seconds)
-    env['JEVLIN_TEST_TLS_URL'] = f'https://127.0.0.1:{listener.getsockname()[1]}/'
+    env['JEVLIN_TEST_TLS_URL'] = f'https://localhost:{listener.getsockname()[1]}/'
     samples = []
     started = time.monotonic()
     with (temp / 'run.log').open('w+') as log:

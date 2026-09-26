@@ -128,3 +128,6 @@ process campaign and resource-monitoring gates.
 
 See [retry-header behavior](docs/retry-after.md) for date formats, clock handling,
 rounding, and delay bounds.
+
+See [certificate validation tests](docs/tls-certificates.md) for trusted HTTPS,
+certificate rejection, and TLS allocation-failure recovery.

@@ -8,6 +8,8 @@ gpa: std.mem.Allocator,
 io: std.Io,
 authorization: [1024]u8 = undefined,
 authorization_len: usize,
+// This field has no storage or usable value in non-test builds.
+test_ca_file: if (@import("builtin").is_test) ?[]const u8 else void = if (@import("builtin").is_test) null else {},
 
 pub fn init(gpa: std.mem.Allocator, io: std.Io, key: []const u8) engine.Error!Http {
     if (key.len == 0 or key.len > 1017) return error.InvalidConfig;
@@ -70,7 +72,19 @@ fn performInner(self: *Http, body: []const u8, output: []u8, endpoint: []const u
     // cancellation cleanup local. Connection pooling is deliberately deferred.
     var client: std.http.Client = .{ .allocator = self.gpa, .io = self.io };
     defer client.deinit();
-    var request = try client.request(.POST, try std.Uri.parse(endpoint), .{
+    const uri = try std.Uri.parse(endpoint);
+    if (std.ascii.eqlIgnoreCase(uri.scheme, "https")) {
+        const wall = std.Io.Clock.real.now(self.io);
+        if (@import("builtin").is_test and self.test_ca_file != null) {
+            try client.ca_bundle.addCertsFromFilePathAbsolute(self.gpa, self.io, wall, self.test_ca_file.?);
+        } else {
+            // Load explicitly so a root-bundle allocation failure stays OOM,
+            // rather than std.http's generic CertificateBundleLoadFailure.
+            try client.ca_bundle.rescan(self.gpa, self.io, wall);
+        }
+        client.now = wall;
+    }
+    var request = try client.request(.POST, uri, .{
         .redirect_behavior = .unhandled,
         .keep_alive = false,
         .headers = .{
@@ -500,4 +514,89 @@ test "HTTP date beyond total deadline prevents another attempt" {
     try std.testing.expectEqual(@as(u8, 1), d.attempts);
     try std.testing.expectEqual(@as(?u16, 429), d.status);
     try server.await(io);
+}
+
+const TlsFixture = struct {
+    ca: []const u8,
+    valid: []const u8,
+    expired: []const u8,
+    wrong_host: []const u8,
+    future: []const u8,
+    untrusted: []const u8,
+    fn load() !std.json.Parsed(@This()) {
+        const env = std.testing.environ.getAlloc(std.testing.allocator, "JEVLIN_TLS_FIXTURE") catch |err| switch (err) {
+            error.EnvironmentVariableMissing => return error.SkipZigTest,
+            else => return err,
+        };
+        defer std.testing.allocator.free(env);
+        return std.json.parseFromSlice(@This(), std.testing.allocator, env, .{ .allocate = .alloc_always });
+    }
+    fn success(http: *Http, url: []const u8) !void {
+        var output: [4]u8 = undefined;
+        const reply = try exchangeAt(http, "{}", &output, now(http) + 5 * std.time.ns_per_s, url);
+        try std.testing.expectEqual(@as(u16, 200), reply.status);
+        try std.testing.expectEqual(@as(usize, 4), reply.len);
+        try std.testing.expectEqualStrings("okay", &output);
+    }
+    fn systemRootAllocations(allocator: std.mem.Allocator, fixture: @This()) !void {
+        var http = try Http.init(allocator, std.testing.io, "test-only-key");
+        defer http.deinit();
+        var output: [4]u8 = undefined;
+        const result = exchangeAt(&http, "{}", &output, now(&http) + 5 * std.time.ns_per_s, fixture.valid);
+        // System roots must reject our isolated CA. Restore memory and inject
+        // the test trust anchor only for the successful recovery request.
+        http.gpa = std.testing.allocator;
+        http.test_ca_file = fixture.ca;
+        try success(&http, fixture.valid);
+        if (result) |_| return error.TestUnexpectedResult else |err| {
+            if (err != error.TlsFailure) return err;
+        }
+    }
+    fn allocations(allocator: std.mem.Allocator, fixture: @This()) !void {
+        var http = try Http.init(allocator, std.testing.io, "test-only-key");
+        defer http.deinit();
+        http.test_ca_file = fixture.ca;
+        success(&http, fixture.valid) catch |err| {
+            http.gpa = std.testing.allocator;
+            try success(&http, fixture.valid);
+            return err;
+        };
+    }
+};
+test "opt-in TLS fixture certificate validation and HTTPS recovery" {
+    const fixture = try TlsFixture.load();
+    defer fixture.deinit();
+    var http = try Http.init(std.testing.allocator, std.testing.io, "test-only-key");
+    defer http.deinit();
+    http.test_ca_file = fixture.value.ca;
+    try TlsFixture.success(&http, fixture.value.valid);
+    const cases = [_][]const u8{ fixture.value.expired, fixture.value.wrong_host, fixture.value.future };
+    for (cases) |url| {
+        var output: [4]u8 = undefined;
+        // std.http collapses certificate causes into TlsInitializationFailed.
+        // The Python runner independently verifies each fixture with OpenSSL.
+        try std.testing.expectError(error.TlsInitializationFailed, performInner(&http, "{}", &output, url));
+        try TlsFixture.success(&http, fixture.value.valid);
+        try std.testing.expectError(error.TlsFailure, exchangeAt(&http, "{}", &output, now(&http) + 5 * std.time.ns_per_s, url));
+        try TlsFixture.success(&http, fixture.value.valid);
+    }
+    var output: [4]u8 = undefined;
+    try std.testing.expectError(error.TlsFailure, exchangeAt(&http, "{}", &output, now(&http) + 5 * std.time.ns_per_s, fixture.value.untrusted));
+    try TlsFixture.success(&http, fixture.value.valid);
+}
+test "opt-in TLS fixture allocation failures clean up and recover over HTTPS" {
+    const fixture = try TlsFixture.load();
+    defer fixture.deinit();
+    var counting = std.testing.FailingAllocator.init(std.testing.allocator, .{});
+    try TlsFixture.allocations(counting.allocator(), fixture.value);
+    try std.testing.expect(counting.alloc_index > 0);
+    try std.testing.expectEqual(counting.allocated_bytes, counting.freed_bytes);
+    std.debug.print("TLS allocation points={d}\n", .{counting.alloc_index});
+    try std.testing.checkAllAllocationFailures(std.testing.allocator, TlsFixture.allocations, .{fixture.value});
+    var roots = std.testing.FailingAllocator.init(std.testing.allocator, .{});
+    try TlsFixture.systemRootAllocations(roots.allocator(), fixture.value);
+    try std.testing.expect(roots.alloc_index > 0);
+    try std.testing.expectEqual(roots.allocated_bytes, roots.freed_bytes);
+    std.debug.print("System-root TLS allocation points={d}\n", .{roots.alloc_index});
+    try std.testing.checkAllAllocationFailures(std.testing.allocator, TlsFixture.systemRootAllocations, .{fixture.value});
 }

@@ -3,3 +3,6 @@ zig-out/
 .env
 __pycache__/
 /soak-report.json
+/tls-report.json
+/soak.log
+/tls.log

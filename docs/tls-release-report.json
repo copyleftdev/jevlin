@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "optimize": "ReleaseSafe",
+  "elapsed_seconds": 0.453,
+  "exit_code": 0,
+  "servers": {
+    "valid": {
+      "http_requests": 23,
+      "rejected_connections": 4,
+      "errors": []
+    },
+    "expired": {
+      "http_requests": 0,
+      "rejected_connections": 2,
+      "errors": []
+    },
+    "wrong_host": {
+      "http_requests": 0,
+      "rejected_connections": 2,
+      "errors": []
+    },
+    "future": {
+      "http_requests": 0,
+      "rejected_connections": 2,
+      "errors": []
+    },
+    "untrusted": {
+      "http_requests": 0,
+      "rejected_connections": 1,
+      "errors": []
+    }
+  },
+  "fixture_verification": {
+    "valid": "valid.pem: OK",
+    "expired": "CN=localhost\nerror 10 at 0 depth lookup: certificate has expired\nerror expired.pem: verification failed",
+    "wrong_host": "CN=wrong.example.invalid\nerror 62 at 0 depth lookup: hostname mismatch\nerror wrong_host.pem: verification failed",
+    "future": "CN=localhost\nerror 9 at 0 depth lookup: certificate is not yet valid\nerror future.pem: verification failed",
+    "untrusted": "CN=localhost\nerror 18 at 0 depth lookup: self-signed certificate\nerror untrusted.pem: verification failed"
+  },
+  "test_output": "1/2 http.test.opt-in TLS fixture certificate validation and HTTPS recovery...OK\n2/2 http.test.opt-in TLS fixture allocation failures clean up and recover over HTTPS...TLS allocation points=3\nSystem-root TLS allocation points=8\nOK\nAll 2 tests passed.\n"
+}
