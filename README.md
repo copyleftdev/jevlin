@@ -26,6 +26,9 @@ const result = try client.evaluate(
 
 See [the complete runnable example](examples/triage.zig) for initialization,
 buffers, credentials, and cleanup.
+See the [offline examples](examples/README.md) for structured questions, capacity
+errors, and bounded parallel usage, and the [public API contract](docs/api-stability.md)
+for ownership, error handling, and compatibility expectations.
 
 ## Run
 

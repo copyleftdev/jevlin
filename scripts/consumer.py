@@ -40,6 +40,7 @@ const Fake = struct {
     }
 };
 pub fn main(init: std.process.Init) !void {
+    try @import("api_contract.zig").main();
     var http = try j.Http.init(init.gpa, init.io, "local-test-key");
     defer http.deinit();
     _ = http.transport(); // Compile production Http, without sending any request.
@@ -96,6 +97,7 @@ def main():
         (consumer/'build.zig').write_text(BUILD, newline='\n')
         (consumer/'src').mkdir(exist_ok=True)
         (consumer/'src/main.zig').write_text(MAIN, newline='\n')
+        (consumer/'src/api_contract.zig').write_text((root/'examples/api_contract.zig').read_text(), newline='\n')
         fetched = run('fetch', '--save=jevlin', str(archive), '--global-cache-dir', str(temp/'cache'))
         if fetched.returncode:
             raise RuntimeError(fetched.stdout+fetched.stderr)

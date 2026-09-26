@@ -28,4 +28,15 @@ pub fn build(b: *std.Build) void {
     check.dependOn(&fmt.step);
     check.dependOn(test_step);
     check.dependOn(&example.step);
+    const examples = b.step("examples", "Run offline public API examples and compatibility contract");
+    for ([_][]const u8{ "structured", "errors_and_buffers", "parallel", "api_contract" }) |name| {
+        const offline = b.addExecutable(.{ .name = name, .root_module = b.createModule(.{
+            .root_source_file = b.path(b.fmt("examples/{s}.zig", .{name})),
+            .target = target,
+            .optimize = optimize,
+            .imports = &.{.{ .name = "jevlin", .module = module }},
+        }) });
+        examples.dependOn(&b.addRunArtifact(offline).step);
+    }
+    check.dependOn(examples);
 }

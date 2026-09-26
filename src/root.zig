@@ -2,6 +2,12 @@ const std = @import("std");
 const codec = @import("codec.zig");
 const schema = @import("schema.zig");
 pub const engine = @import("engine.zig");
+/// Preferred public names. The engine aliases remain source-compatible.
+pub const Config = engine.Config;
+pub const Diagnostics = engine.Diagnostics;
+pub const Transport = engine.Transport;
+pub const TransportError = engine.Error;
+pub const Reply = engine.Reply;
 pub const Http = @import("http.zig");
 pub const noul = schema.noul;
 pub const choice = schema.choice;
@@ -14,6 +20,7 @@ pub const choiceStructured = schema.choiceStructured;
 pub const scoreStructured = schema.scoreStructured;
 pub const Usage = codec.Usage;
 pub const Error = engine.Error || codec.Error;
+/// Caller-owned, nonempty, disjoint buffers. Do not share across in-flight calls.
 pub const Workspace = struct { request: []u8, response: []u8, scratch: []u8 };
 pub fn Result(comptime Q: type) type {
     return struct { answers: Answers(Q), model: []const u8, raw: []const u8, usage: ?Usage, attempts: u8 };
@@ -28,7 +35,9 @@ pub const Client = struct {
         try config.validate();
         return .{ .transport = transport, .config = config };
     }
-    /// Returned model/legend/raw slices borrow workspace until its next use.
+    /// Returned model/legend/raw and diagnostic JSON borrow workspace until reuse,
+    /// including a later failed call. Copy borrowed data before the next call.
+    /// Busy returns without modifying diagnostics or workspace.
     /// State must be JSON-serializable; structured question helpers accept JSON-serializable values.
     pub fn evaluate(self: *Client, state: anytype, questions: anytype, model: []const u8, workspace: Workspace, diagnostics: *engine.Diagnostics) Error!Result(@TypeOf(questions)) {
         if (self.busy.swap(true, .acquire)) return error.Busy;
