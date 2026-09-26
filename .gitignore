@@ -4,5 +4,6 @@ zig-out/
 __pycache__/
 /soak-report.json
 /tls-report.json
+/consumer-report.json
 /soak.log
 /tls.log

@@ -46,6 +46,10 @@ To consume locally, add `.jevlin = .{ .path = "../jevlin" }` under your package'
 `build.zig.zon` dependencies, then import `b.dependency("jevlin", .{
 .target = target, .optimize = optimize }).module("jevlin")` into your application module.
 
+`python3 scripts/consumer.py` verifies installation from a local archive in a
+separate application with a fresh package cache. See the
+[compatibility checks](docs/compatibility.md) for platform coverage and limits.
+
 ## Contract
 
 - Choice uses an exhaustive enum with 1–255 options; Score has 2–10 levels.

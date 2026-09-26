@@ -4,23 +4,37 @@ permissions:
   contents: read
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
     strategy:
+      fail-fast: false
       matrix:
+        os: [ubuntu-24.04, macos-14, windows-2022]
         optimize: [Debug, ReleaseSafe]
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - uses: mlugg/setup-zig@v2
         with:
           version: 0.16.0
       - run: zig build check -Doptimize=${{ matrix.optimize }}
-      - run: python3 scripts/compile_fail.py "$(command -v zig)"
+      - run: python scripts/compile_fail.py zig
+      - name: Verify packaged dependency in a separate application
+        run: python scripts/consumer.py --optimize=${{ matrix.optimize }}
       - name: Verify TLS certificates and allocation recovery
-        run: python3 scripts/tls.py --optimize=${{ matrix.optimize }} --report tls-report.json
-      - name: Upload TLS report
+        if: runner.os == 'Linux'
+        run: python scripts/tls.py --optimize=${{ matrix.optimize }} --report tls-report.json
+      - name: Upload compatibility reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: tls-${{ matrix.optimize }}
-          path: tls-report.json
+          name: compatibility-${{ matrix.os }}-${{ matrix.optimize }}
+          path: |
+            tls-report.json
+            consumer-report.json
           if-no-files-found: warn
