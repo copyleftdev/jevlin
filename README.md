@@ -61,8 +61,10 @@ To consume locally, add `.jevlin = .{ .path = "../jevlin" }` under your package'
   HTTP tasks are canceled and joined before returning. This is cooperative
   cancellation, not a hard real-time guarantee.
 - Default maximum is two retries. Only transport failures and HTTP 408, 429,
-  and 5xx are retried. Numeric `Retry-After` and `Retry-After-Ms` are supported.
-  HTTP-date retry headers are not yet supported. Backoff is seeded and reproducible;
+  and 5xx are retried. `Retry-After` accepts numeric delays and HTTP dates; `Retry-After-Ms`
+  accepts numeric milliseconds. Valid milliseconds take precedence regardless of
+  header order. Invalid values fall back to another valid header or normal backoff.
+  Backoff is seeded and reproducible;
   configure distinct seeds across workers to avoid synchronized retries.
 - HTTP uses the standard library allocator and a fresh connection per attempt.
   The codec uses fixed caller memory; the whole SDK is **not allocation-free**.
@@ -75,7 +77,7 @@ cover this first slice. A live three-question batch succeeded against `jev-1.13.
 Live success does not establish production readiness or predictive accuracy.
 
 Next work: broader compatibility fixtures,
-HTTP-date retry handling, load/cancellation stress tests, and measured connection
+broader TLS coverage, longer load/cancellation tests, and measured connection
 reuse. Dynamic schemas and model discovery are not implemented.
 
 Structured inputs use `noulWithCriteria(instructions, criteria)`,
@@ -123,3 +125,6 @@ See [transport lifecycle testing](docs/transport-testing.md) for disconnects,
 deadline races, cancellation, concurrent adapters, and cleanup evidence.
 See [TLS and soak testing](docs/tls-soak-testing.md) for the optional persistent
 process campaign and resource-monitoring gates.
+
+See [retry-header behavior](docs/retry-after.md) for date formats, clock handling,
+rounding, and delay bounds.

@@ -1,5 +1,6 @@
 const std = @import("std");
 const engine = @import("engine.zig");
+const retry_after = @import("retry_after.zig");
 const Http = @This();
 /// Only the official HTTPS endpoint is supported in this first release.
 /// std HTTP/TLS allocates using gpa. No allocation-free transport claim.
@@ -90,14 +91,11 @@ fn performInner(self: *Http, body: []const u8, output: []u8, endpoint: []const u
     if (response.head.content_encoding != .identity) return error.InvalidResponse;
     if (response.head.content_length) |n| if (n > output.len) return error.ResponseTooLarge;
     var reply: engine.Reply = .{ .status = @intFromEnum(response.head.status), .len = 0 };
+    const wall_ns = std.Io.Clock.real.now(self.io).nanoseconds;
+    var retry_headers: retry_after.Headers = .{};
     var headers = response.head.iterateHeaders();
-    while (headers.next()) |header| {
-        if (std.ascii.eqlIgnoreCase(header.name, "retry-after-ms")) {
-            reply.retry_after_ns = retryDelay(header.value, std.time.ns_per_ms);
-        } else if (reply.retry_after_ns == null and std.ascii.eqlIgnoreCase(header.name, "retry-after")) {
-            reply.retry_after_ns = retryDelay(header.value, std.time.ns_per_s);
-        }
-    }
+    while (headers.next()) |header| retry_headers.add(header.name, header.value, wall_ns);
+    reply.retry_after_ns = retry_headers.delay();
     var transfer: [256]u8 = undefined;
     const reader = response.reader(&transfer);
     reply.len = try reader.readSliceShort(output);
@@ -105,12 +103,6 @@ fn performInner(self: *Http, body: []const u8, output: []u8, endpoint: []const u
     if (try reader.readSliceShort(&extra) != 0) return error.ResponseTooLarge;
     if (response.head.content_length) |n| if (reply.len != n) return error.TransportFailure;
     return reply;
-}
-fn retryDelay(text: []const u8, multiplier: u64) ?u64 {
-    const number = std.fmt.parseFloat(f64, text) catch return null;
-    if (!std.math.isFinite(number) or number < 0) return null;
-    const ns = number * @as(f64, @floatFromInt(multiplier));
-    return @intFromFloat(@min(ns, 300 * std.time.ns_per_s));
 }
 
 fn serveTest(listener: *std.Io.net.Server, bytes: []const u8, delay: std.Io.Duration) !void {
@@ -458,4 +450,54 @@ test "opt-in sustained lifecycle soak" {
         rounds += 1;
     }
     std.debug.print("soak rounds={d} exchanges={d} descriptors={d}\n", .{ rounds, rounds * 84, before });
+}
+
+test "HTTP date retry header parsing and millisecond precedence" {
+    const io = std.testing.io;
+    const cases = [_]struct { headers: []const u8, delay: ?u64 }{
+        .{ .headers = "Retry-After: Sun, 06 Nov 1994 08:49:37 GMT\r\n", .delay = 0 },
+        .{ .headers = "Retry-After: Fri, 31 Dec 9999 23:59:59 GMT\r\n", .delay = retry_after.max_delay_ns },
+        .{ .headers = "Retry-After: Fri, 31 Dec 9999 23:59:59 GMT\r\nRetry-After-Ms: invalid\r\n", .delay = retry_after.max_delay_ns },
+        .{ .headers = "Retry-After: Fri, 31 Dec 9999 23:59:59 GMT\r\nRetry-After-Ms: 25\r\n", .delay = 25 * std.time.ns_per_ms },
+        .{ .headers = "Retry-After-Ms: 25\r\nRetry-After: Fri, 31 Dec 9999 23:59:59 GMT\r\n", .delay = 25 * std.time.ns_per_ms },
+        .{ .headers = "Retry-After: invalid-date\r\n", .delay = null },
+    };
+    var http = try Http.init(std.testing.allocator, io, "test-only-key");
+    defer http.deinit();
+    for (cases) |case| {
+        const address: std.Io.net.IpAddress = .{ .ip4 = .loopback(0) };
+        var listener = try address.listen(io, .{ .reuse_address = true });
+        defer listener.deinit(io);
+        var response_buffer: [512]u8 = undefined;
+        const response = try std.fmt.bufPrint(&response_buffer, "HTTP/1.1 429 Limited\r\nContent-Length: 0\r\n{s}\r\n", .{case.headers});
+        var server = try io.concurrent(serveTest, .{ &listener, response, std.Io.Duration.zero });
+        defer _ = server.cancel(io) catch {};
+        var url_buffer: [128]u8 = undefined;
+        const url = try std.fmt.bufPrint(&url_buffer, "http://127.0.0.1:{d}/", .{listener.socket.address.getPort()});
+        var output: [1]u8 = undefined;
+        const reply = try exchangeAt(&http, "{}", &output, now(&http) + std.time.ns_per_s, url);
+        try std.testing.expectEqual(case.delay, reply.retry_after_ns);
+        try server.await(io);
+    }
+}
+test "HTTP date beyond total deadline prevents another attempt" {
+    const io = std.testing.io;
+    const address: std.Io.net.IpAddress = .{ .ip4 = .loopback(0) };
+    var listener = try address.listen(io, .{ .reuse_address = true });
+    defer listener.deinit(io);
+    var server = try io.concurrent(serveTest, .{ &listener, "HTTP/1.1 429 Limited\r\nContent-Length: 0\r\nRetry-After: Fri, 31 Dec 9999 23:59:59 GMT\r\n\r\n", std.Io.Duration.zero });
+    defer _ = server.cancel(io) catch {};
+    var http = try Http.init(std.testing.allocator, io, "test-only-key");
+    defer http.deinit();
+    var url_buffer: [128]u8 = undefined;
+    const url = try std.fmt.bufPrint(&url_buffer, "http://127.0.0.1:{d}/", .{listener.socket.address.getPort()});
+    var context: RetryLoopback = .{ .http = &http, .url = url };
+    const injected: engine.Transport = .{ .context = &context, .now = RetryLoopback.clock, .sleep = RetryLoopback.pause, .exchange = RetryLoopback.exchange };
+    var d: engine.Diagnostics = .{};
+    var output: [1]u8 = undefined;
+    const config: engine.Config = .{ .timeout_ms = 1000 };
+    try std.testing.expectError(error.DeadlineExceeded, engine.send(injected, config, engine.deadline(injected, config), "{}", &output, &d));
+    try std.testing.expectEqual(@as(u8, 1), d.attempts);
+    try std.testing.expectEqual(@as(?u16, 429), d.status);
+    try server.await(io);
 }

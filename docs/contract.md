@@ -34,7 +34,7 @@ Python SDK parity.
 | Structured questions | Supported by structured helpers; validated after bounded JSON encoding |
 | Usage | Optional typed counters; present usage must contain nonnegative integer input/output counts. Missing usage remains accepted for compatibility |
 | Error bodies | Status/attempts plus borrowed raw body and best-effort parsed JSON; no assumed vendor-specific error envelope |
-| Retry headers | Numeric seconds/milliseconds only; HTTP-date unsupported |
+| Retry headers | Numeric seconds/milliseconds and all three HTTP-date forms; valid milliseconds take precedence, malformed values are ignored |
 | Extra fields | Unknown root/answer fields and extra answer IDs are ignored |
 | Probability rounding | Sum tolerance 0.02; selected Choice may trail maximum by up to 0.02 |
 | Score rounding | Weighted-value tolerance 0.02 times level count; range remains strict |
