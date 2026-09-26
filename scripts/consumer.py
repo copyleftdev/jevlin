@@ -5,6 +5,7 @@ import json
 import pathlib
 import platform
 import re
+import shutil
 import subprocess
 import tarfile
 import tempfile
@@ -73,6 +74,7 @@ pub fn main(init: std.process.Init) !void {
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--zig', default='zig')
+    p.add_argument('--archive', type=pathlib.Path, help='Verify these exact archive bytes instead of creating an archive')
     p.add_argument('--optimize', choices=['Debug','ReleaseSafe'], default='Debug')
     p.add_argument('--report', type=pathlib.Path, default=pathlib.Path('consumer-report.json'))
     a = p.parse_args()
@@ -82,11 +84,14 @@ def main():
         archive = temp/'jevlin.tar.gz'
         # Archive working copies of tracked files; Zig applies build.zig.zon's
         # package paths filter when fetching. No access to checkout paths in app.
-        files = subprocess.run(['git','ls-files','-z'], cwd=root, capture_output=True, check=True).stdout.decode().split('\0')
-        with tarfile.open(archive, 'w:gz') as tar:
-            for name in files:
-                if name:
-                    tar.add(root/name, arcname='jevlin/'+name)
+        if a.archive:
+            shutil.copyfile(a.archive, archive)
+        else:
+            files = subprocess.run(['git','ls-files','-z'], cwd=root, capture_output=True, check=True).stdout.decode().split('\0')
+            with tarfile.open(archive, 'w:gz') as tar:
+                for name in files:
+                    if name:
+                        tar.add(root/name, arcname='jevlin/'+name)
         consumer = temp/'app'
         consumer.mkdir()
         def run(*args):

@@ -3,6 +3,9 @@
 A small, typed Zig SDK for TypeSafe AI's Jev. Independent and experimental;
 not affiliated with TypeSafe AI or TigerBeetle. Targets **Zig 0.16.0**.
 
+See the [changelog](CHANGELOG.md) and [private release rehearsal](docs/releases.md)
+for release preparation and versioning policy.
+
 The first working slice sends a batch of Noul, Choice, and Score questions to
 `POST https://api.typesafe.ai/v1/systemone`, then validates and decodes typed answers.
 It supports JSON-serializable string/object/array state, text helpers, and structured

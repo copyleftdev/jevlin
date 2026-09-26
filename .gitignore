@@ -7,3 +7,4 @@ __pycache__/
 /consumer-report.json
 /soak.log
 /tls.log
+/release-dist/
