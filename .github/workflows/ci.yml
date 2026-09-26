@@ -27,8 +27,11 @@ jobs:
       - name: Verify packaged dependency in a separate application
         run: python scripts/consumer.py --optimize=${{ matrix.optimize }}
       - name: Verify TLS certificates and allocation recovery
-        if: runner.os == 'Linux'
-        run: python scripts/tls.py --optimize=${{ matrix.optimize }} --report tls-report.json
+        run: |
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            export PATH="$(brew --prefix openssl@3)/bin:$PATH"
+          fi
+          python scripts/tls.py --optimize=${{ matrix.optimize }} --report tls-report.json
       - name: Upload compatibility reports
         if: always()
         uses: actions/upload-artifact@v4

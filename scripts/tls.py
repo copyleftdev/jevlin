@@ -5,6 +5,8 @@ import datetime as dt
 import json
 import os
 import pathlib
+import platform
+import shutil
 import socket
 import ssl
 import subprocess
@@ -13,8 +15,11 @@ import threading
 import time
 
 
+OPENSSL = 'openssl'
+
+
 def openssl(directory, *args):
-    subprocess.run(['openssl', *args], cwd=directory, check=True,
+    subprocess.run([OPENSSL, *args], cwd=directory, check=True,
                    stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
 
 
@@ -126,15 +131,23 @@ class Server:
 
 
 def main():
+    global OPENSSL
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--zig', default='zig')
+    parser.add_argument('--openssl', default='openssl', help='OpenSSL 3 executable (not LibreSSL)')
     parser.add_argument('--optimize', choices=['Debug', 'ReleaseSafe'], default='Debug')
     parser.add_argument('--report', type=pathlib.Path, default=pathlib.Path('tls-report.json'))
     args = parser.parse_args()
+    OPENSSL = shutil.which(args.openssl)
+    if OPENSSL is None:
+        parser.error('OpenSSL executable not found')
+    openssl_version = subprocess.run([OPENSSL, 'version'], capture_output=True, text=True, check=True).stdout.strip()
+    if not openssl_version.startswith('OpenSSL 3.'):
+        parser.error('Fixture verification requires OpenSSL 3: '+openssl_version)
     root = pathlib.Path(__file__).resolve().parents[1]
     with tempfile.TemporaryDirectory(prefix='jevlin-tls-') as temporary:
         directory = pathlib.Path(temporary)
-        binary = directory / 'tls-tests'
+        binary = directory / ('tls-tests.exe' if os.name == 'nt' else 'tls-tests')
         subprocess.run([args.zig, 'test', str(root/'src/http.zig'), '--test-filter', 'TLS fixture',
                         '--test-no-exec', '-O'+args.optimize, '-femit-bin='+str(binary)], check=True)
         certificates(directory)
@@ -142,7 +155,7 @@ def main():
         expected = {'valid': None, 'expired': 'certificate has expired', 'wrong_host': 'hostname mismatch',
                     'future': 'certificate is not yet valid', 'untrusted': 'self-signed certificate'}
         for name, reason in expected.items():
-            check = subprocess.run(['openssl', 'verify', '-CAfile', 'ca.pem', '-no-CApath', '-no-CAstore',
+            check = subprocess.run([OPENSSL, 'verify', '-CAfile', 'ca.pem', '-no-CApath', '-no-CAstore',
                                     '-purpose', 'sslserver', '-verify_hostname', 'localhost', name+'.pem'],
                                    cwd=directory, capture_output=True, text=True)
             detail = check.stdout + check.stderr
@@ -172,7 +185,9 @@ def main():
                                  'errors': server.errors} for server in servers}
         # Invalid certificates must be rejected before sending HTTP credentials/body.
         passed = code == 0 and servers[0].requests > 0 and all(not s.errors for s in servers) and all(s.requests == 0 for s in servers[1:])
-        report = {'passed': passed, 'optimize': args.optimize, 'elapsed_seconds': round(time.monotonic()-started,3),
+        report = {'passed': passed, 'optimize': args.optimize, 'platform': platform.platform(),
+                  'machine': platform.machine(), 'openssl': openssl_version, 'python_tls': ssl.OPENSSL_VERSION,
+                  'elapsed_seconds': round(time.monotonic()-started,3),
                   'exit_code': code, 'servers': evidence, 'fixture_verification': verification, 'test_output': output}
         args.report.write_text(json.dumps(report, indent=2)+'\n')
         print(output, end='')
