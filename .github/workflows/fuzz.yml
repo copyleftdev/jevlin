@@ -1,0 +1,36 @@
+name: Jevlin coverage-guided fuzzing
+on:
+  workflow_dispatch:
+    inputs:
+      iterations:
+        description: Iterations per oracle (runner may overshoot slightly)
+        type: choice
+        default: '100000'
+        options: ['10000', '100000', '1000000']
+permissions:
+  contents: read
+jobs:
+  fuzz:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        optimize: [Debug, ReleaseSafe]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: 0.16.0
+      - name: Run separate parser and encoder campaigns
+        env:
+          ITERATIONS: ${{ inputs.iterations }}
+        run: python3 scripts/fuzz.py --iterations "$ITERATIONS" --optimize=${{ matrix.optimize }}
+      - name: Preserve reports and crash inputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuzz-${{ matrix.optimize }}-${{ github.sha }}
+          path: fuzz-results/
+          if-no-files-found: warn
+          retention-days: 30

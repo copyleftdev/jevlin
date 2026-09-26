@@ -21,5 +21,7 @@
 - Private source-archive rehearsal with SHA-256 checksums and reproducibility
   checks. No public release or license has been selected yet.
 
-Coverage-guided fuzzing remains blocked by the documented Zig 0.16.0 test-runner
-issue. Platform TLS coverage and soak evidence retain their documented limits.
+Coverage-guided parser and encoder campaigns now run with LLVM and a scoped
+error-return-tracing workaround on unmodified Zig 0.16.0. Reports, crash capture,
+and replay are available through a manual workflow. Platform TLS coverage and
+soak evidence retain their documented limits.

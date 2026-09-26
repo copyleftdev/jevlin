@@ -130,7 +130,7 @@ See [engineering notes](docs/engineering.md) for the safety adaptation and limit
 See the [API contract matrix](docs/contract.md) for supported fields, explicit
 compatibility gaps, fixture provenance, and validation policies.
 See [memory and fuzz testing](docs/memory-testing.md) for the bounded campaigns,
-allocation-failure coverage, and the current coverage-guided toolchain blocker.
+allocation-failure coverage, and the bounded coverage-guided campaigns.
 See [transport lifecycle testing](docs/transport-testing.md) for disconnects,
 deadline races, cancellation, concurrent adapters, and cleanup evidence.
 See [TLS and soak testing](docs/tls-soak-testing.md) for the optional persistent

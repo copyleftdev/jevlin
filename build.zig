@@ -7,11 +7,24 @@ pub fn build(b: *std.Build) void {
     const run = b.addRunArtifact(tests);
     const test_step = b.step("test", "Run offline contract and fault tests");
     test_step.dependOn(&run.step);
-    const fuzz_tests = b.addTest(.{ .root_module = b.createModule(.{
-        .root_source_file = b.path("src/fuzz.zig"),
-        .target = target,
-        .optimize = optimize,
-    }) });
+    const fuzz_target = b.option(enum { all, parser, encoder }, "fuzz-target", "Select a standalone fuzz oracle") orelse .all;
+    const fuzz_tests = b.addTest(.{
+        .filters = switch (fuzz_target) {
+            .all => &.{},
+            .parser => &.{"fuzz parser and typed decoder"},
+            .encoder => &.{"fuzz request encoder"},
+        },
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("src/fuzz.zig"),
+            .target = target,
+            .optimize = optimize,
+            // Zig 0.16.0's fuzz runner uses the wrong error-return trace type.
+            // Disable only return tracing; safety checks and fuzz instrumentation stay on.
+            .error_tracing = b.option(bool, "fuzz-error-tracing", "Enable error-return traces in the standalone fuzz target") orelse false,
+        }),
+        // The default x86 backend produced an empty PC table with -ffuzz on 0.16.0.
+        .use_llvm = true,
+    });
     b.step("fuzz", "Run bounded parser/encoder mutation campaigns without sockets").dependOn(&b.addRunArtifact(fuzz_tests).step);
     const example = b.addExecutable(.{ .name = "jevlin-triage", .root_module = b.createModule(.{
         .root_source_file = b.path("examples/triage.zig"),

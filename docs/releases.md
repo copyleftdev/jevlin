@@ -40,7 +40,7 @@ package. Checksums are not signatures or publisher authentication.
 3. Require passing native CI, TLS checks, a private rehearsal, and reviewed soak
    evidence for the intended release commit. Earlier commits' evidence must not
    be presented as validation of later code without reviewing the differences.
-4. Review remaining documented limits, including the coverage-guided fuzz blocker.
+4. Review remaining documented limits, including the scope of the fuzz campaigns.
 5. Obtain explicit approval to make the repository/release public. Only then
    create a matching version tag and publish the verified archive/checksums.
 

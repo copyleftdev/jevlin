@@ -49,6 +49,7 @@ machine; the test does not claim exhaustive interleaving coverage.
 
 Basic TLS failures and optional persistent-process resource monitoring are now
 covered by [TLS and soak testing](tls-soak-testing.md). DNS failures, multi-hour
-soak evidence, broader platform coverage, and the previously documented Zig
-coverage-guided fuzzing blocker remain outstanding. Cancellation is cooperative,
+soak evidence, broader platform coverage, and longer coverage-guided campaigns
+remain outstanding. See [fuzz testing](memory-testing.md) for the working bounded
+campaigns. Cancellation is cooperative,
 not hard real-time.
