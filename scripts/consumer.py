@@ -93,9 +93,9 @@ def main():
         initialized = run('init', '--minimal')
         if initialized.returncode:
             raise RuntimeError(initialized.stdout + initialized.stderr)
-        (consumer/'build.zig').write_text(BUILD)
+        (consumer/'build.zig').write_text(BUILD, newline='\n')
         (consumer/'src').mkdir(exist_ok=True)
-        (consumer/'src/main.zig').write_text(MAIN)
+        (consumer/'src/main.zig').write_text(MAIN, newline='\n')
         fetched = run('fetch', '--save=jevlin', str(archive), '--global-cache-dir', str(temp/'cache'))
         if fetched.returncode:
             raise RuntimeError(fetched.stdout+fetched.stderr)

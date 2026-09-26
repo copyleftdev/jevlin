@@ -1,0 +1,2 @@
+# Zig formatting and byte-exact contract fixtures require consistent newlines.
+* text=auto eol=lf
