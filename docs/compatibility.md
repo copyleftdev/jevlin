@@ -8,10 +8,11 @@ specific commit before relying on it.
 
 Each job checks formatting, offline contract and transport fault tests, example
 compilation, invalid-schema compilation failures, and a separate application
-using the packaged SDK. Linux additionally verifies valid, expired, future,
+using the packaged SDK. All three platforms additionally verify valid, expired, future,
 wrong-host, and untrusted TLS certificates and allocation-failure recovery.
-TLS certificate fixtures and Linux resource soak measurements do not establish
-equivalent TLS or resource behavior on Windows or macOS.
+The resource soak remains Linux-only; its measurements do not establish
+equivalent resource behavior on Windows or macOS. TLS results cover the runner
+OS and root-store snapshot, not every OS version or trust configuration.
 
 ## Independent consumer
 

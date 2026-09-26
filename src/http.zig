@@ -80,7 +80,7 @@ fn performInner(self: *Http, body: []const u8, output: []u8, endpoint: []const u
         } else {
             // Load explicitly so a root-bundle allocation failure stays OOM,
             // rather than std.http's generic CertificateBundleLoadFailure.
-            try client.ca_bundle.rescan(self.gpa, self.io, wall);
+            try @import("system_roots.zig").load(&client.ca_bundle, self.gpa, self.io, wall);
         }
         client.now = wall;
     }

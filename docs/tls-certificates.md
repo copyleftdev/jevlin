@@ -7,10 +7,15 @@ python3 scripts/tls.py --zig /path/to/zig --optimize Debug --report tls-report.j
 python3 scripts/tls.py --zig /path/to/zig --optimize ReleaseSafe --report tls-report.json
 ```
 
-Python's standard library and the OpenSSL CLI generate a temporary CA and five
+Python's standard library and the OpenSSL 3 CLI generate a temporary CA and five
 localhost HTTPS servers. No package install, API key, public endpoint, or system
 trust-store modification is needed. Keys and certificates live in a temporary
 directory that is removed afterward.
+
+Use `--openssl /path/to/openssl` to select OpenSSL 3 explicitly. On macOS CI,
+Homebrew's `openssl@3` is selected instead of the system LibreSSL. Windows uses
+an `.exe` test binary. Reports record the OS/architecture, OpenSSL fixture-tool
+version, and Python TLS version; the SDK itself uses Zig's TLS implementation.
 
 ## Recorded verification
 
@@ -68,7 +73,7 @@ are consumed only by test functions; production does not read them.
 
 ## CI and previous evidence
 
-Regular GitHub CI runs the certificate suite separately in Debug and ReleaseSafe
+Regular GitHub CI runs the certificate suite on Linux, macOS, and Windows in Debug and ReleaseSafe
 and uploads its JSON reports. The manual soak workflow also runs it and uploads
 its report and log alongside soak artifacts. Normal `zig build check` skips these
 two fixture-dependent tests when the runner has not provided the fixture.
@@ -80,7 +85,22 @@ this suite verifies a trusted positive control and each negative fixture. The
 historical soak report remains historical evidence, not proof of its exact
 certificate rejection cause.
 
+## Windows allocation cleanup
+
+Native Windows testing found that Zig 0.16.0's system-root loader retained its
+current certificate context on an allocation-error return. Closing the store
+then hit an assertion instead of returning OutOfMemory. Jevlin's small Windows
+loader in `src/system_roots.zig` frees the outstanding context before closing the
+store on every early exit and checks enumeration termination. Other platforms
+continue to use the standard loader. No trust store or verification policy is
+relaxed, and the system-root allocation sweep remains enabled.
+
+This follows [Microsoft's certificate enumeration ownership contract](https://learn.microsoft.com/en-us/windows/win32/api/wincrypt/nf-wincrypt-certenumcertificatesinstore):
+advancing enumeration releases the previous context; an early exit requires an
+explicit context release. The store-close check also detects outstanding native
+certificate contexts, which Zig allocator accounting alone would not detect.
+
 Remaining scope includes certificate chains with intermediates, revocation
-policy, other operating systems, runtime allocator failures, concurrent TLS
+policy, additional OS versions, runtime allocator failures, concurrent TLS
 stress, and multi-hour soak evidence. These tests do not establish comprehensive
 TLS protocol conformance.

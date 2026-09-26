@@ -2,6 +2,10 @@
 
 ## Unreleased — 0.1.0-dev
 
+- Native TLS certificate and allocation-recovery checks on Linux, macOS, and
+  Windows; Windows system-root loading releases certificate contexts on OOM
+  instead of triggering Zig 0.16.0's store-close assertion.
+
 - Typed Noul, Choice, and Score batches, structured instructions/criteria, and
   optional token usage for the Jev systemone endpoint.
 - Caller-owned bounded buffers, explicit borrowed result lifetimes, typed errors,
