@@ -1,0 +1,332 @@
+[
+  {
+    "name": "valid-batch",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": true
+  },
+  {
+    "name": "missing-model",
+    "response": "{\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "missing-answers",
+    "response": "{\"model\":\"jev-contract\",\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "model-wrong-type",
+    "response": "{\"model\":3,\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "answers-wrong-type",
+    "response": "{\"model\":\"jev-contract\",\"answers\":[],\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "missing-answer-urgent",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "missing-urgent-type",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "missing-urgent-noul",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\"},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "wrong-type-urgent",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"future\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "missing-answer-team",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "missing-team-type",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "missing-team-choice",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "missing-team-probabilities",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "missing-team-confidence",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1}},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "wrong-type-team",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"future\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "missing-answer-severity",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "missing-severity-type",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "missing-severity-score",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "missing-severity-probabilities",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "missing-severity-confidence",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "missing-severity-legend",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "wrong-type-severity",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"future\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "invalid-noul--0.01",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":-0.01},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "invalid-noul-1.01",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":1.01},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "invalid-noul-None",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":null},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "invalid-noul-0.8",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":\"0.8\"},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "invalid-noul-True",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":true},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "noul-endpoint-0",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": true
+  },
+  {
+    "name": "noul-endpoint-1",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":1},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": true
+  },
+  {
+    "name": "invalid-confidence-team--0.1",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":-0.1},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "invalid-confidence-team-1.1",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":1.1},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "invalid-confidence-team-None",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":null},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "invalid-confidence-team-0.5",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":\"0.5\"},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "invalid-confidence-severity--0.1",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":-0.1,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "invalid-confidence-severity-1.1",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":1.1,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "invalid-confidence-severity-None",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":null,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "invalid-confidence-severity-0.5",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":\"0.5\",\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "unknown-choice",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"sales\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "nonwinning-choice",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"technical\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "choice-missing-option",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "choice-extra-option",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1,\"sales\":0},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "choice-negative-probability",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":1.1,\"technical\":-0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "choice-invalid-sum",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.4,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "choice-rounded-sum",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.099},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": true
+  },
+  {
+    "name": "choice-tie",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.5,\"technical\":0.5},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": true
+  },
+  {
+    "name": "invalid-score--0.1",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":-0.1,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "invalid-score-1.1",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":1.1,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "invalid-score-0.9",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.9,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "invalid-score-0.25",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":\"0.25\",\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "rounded-score",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.251,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": true
+  },
+  {
+    "name": "missing-score-key",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":1},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "wrong-score-key",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"2\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "missing-legend-key",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "invalid-legend-value",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":null,\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": false
+  },
+  {
+    "name": "structured-legend-extension",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":{\"label\":\"Low\"},\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": true
+  },
+  {
+    "name": "future-root-field",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12},\"request_id\":\"synthetic\"}",
+    "valid": true
+  },
+  {
+    "name": "future-answer-field",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8,\"explanation\":\"synthetic\"},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": true
+  },
+  {
+    "name": "extra-answer",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}},\"future\":{\"type\":\"future\"}},\"usage\":{\"input_tokens\":42,\"output_tokens\":12}}",
+    "valid": true
+  },
+  {
+    "name": "usage-absent-permissive-policy",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}}}",
+    "valid": true
+  },
+  {
+    "name": "usage-wrong-type",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":\"not validated\"}",
+    "valid": false
+  },
+  {
+    "name": "truncated-json",
+    "response": "{\"model\":",
+    "valid": false
+  },
+  {
+    "name": "duplicate-model",
+    "response": "{\"model\":\"duplicate\",\"model\": \"jev-contract\", \"answers\": {\"urgent\": {\"type\": \"noul\", \"noul\": 0.8}, \"team\": {\"type\": \"choice\", \"choice\": \"billing\", \"probabilities\": {\"billing\": 0.9, \"technical\": 0.1}, \"confidence\": 0.6}, \"severity\": {\"type\": \"score\", \"score\": 0.25, \"probabilities\": {\"0\": 0.75, \"1\": 0.25}, \"confidence\": 0.2, \"legend\": {\"0\": \"Low\", \"1\": \"High\"}}}, \"usage\": {\"input_tokens\": 42, \"output_tokens\": 12}}",
+    "valid": false
+  },
+  {
+    "name": "usage-negative",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":-1,\"output_tokens\":1}}",
+    "valid": false
+  },
+  {
+    "name": "usage-fractional",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":1.5,\"output_tokens\":1}}",
+    "valid": false
+  },
+  {
+    "name": "usage-missing-counter",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":1}}",
+    "valid": false
+  },
+  {
+    "name": "usage-zero",
+    "response": "{\"model\":\"jev-contract\",\"answers\":{\"urgent\":{\"type\":\"noul\",\"noul\":0.8},\"team\":{\"type\":\"choice\",\"choice\":\"billing\",\"probabilities\":{\"billing\":0.9,\"technical\":0.1},\"confidence\":0.6},\"severity\":{\"type\":\"score\",\"score\":0.25,\"probabilities\":{\"0\":0.75,\"1\":0.25},\"confidence\":0.2,\"legend\":{\"0\":\"Low\",\"1\":\"High\"}}},\"usage\":{\"input_tokens\":0,\"output_tokens\":0}}",
+    "valid": true
+  }
+]

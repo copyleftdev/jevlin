@@ -1,0 +1,71 @@
+name: Jevlin manual soak
+on:
+  workflow_dispatch:
+    inputs:
+      seconds:
+        description: 'Duration: 300 = 5 min, 3600 = 1 hour, 10800 = 3 hours'
+        type: choice
+        required: true
+        default: '3600'
+        options:
+          - '300'
+          - '1800'
+          - '3600'
+          - '10800'
+permissions:
+  contents: read
+concurrency:
+  group: jevlin-soak-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  soak:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 190
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: 0.16.0
+      - name: Check toolchain
+        run: |
+          zig version
+          python3 --version
+          openssl version
+      - name: Run local TLS and transport soak
+        env:
+          SOAK_SECONDS: ${{ inputs.seconds }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "$SOAK_SECONDS" in
+            300|1800|3600|10800) ;;
+            *) echo 'Unsupported duration'; exit 2 ;;
+          esac
+          python3 -u scripts/soak.py --seconds "$SOAK_SECONDS" --report soak-report.json 2>&1 | tee soak.log
+      - name: Summarize results
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib
+          report = pathlib.Path('soak-report.json')
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
+              out.write('## Jevlin soak\n\n')
+              if report.exists():
+                  data = json.loads(report.read_text())
+                  for key in ('passed', 'requested_seconds', 'elapsed_seconds', 'rss_plateau_gate', 'thread_plateau_gate'):
+                      out.write(f'- {key}: {data[key]}\n')
+                  out.write('\nFull samples and test output are in the report artifact.\n')
+              else:
+                  out.write('No completed report. Check the uploaded log for setup errors or interruption.\n')
+          PY
+      - name: Upload report and log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jevlin-soak-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            soak-report.json
+            soak.log
+          if-no-files-found: warn
+          retention-days: 30

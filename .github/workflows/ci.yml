@@ -1,0 +1,17 @@
+name: Jevlin
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        optimize: [Debug, ReleaseSafe]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: 0.16.0
+      - run: zig build check -Doptimize=${{ matrix.optimize }}
+      - run: python3 scripts/compile_fail.py "$(command -v zig)"
