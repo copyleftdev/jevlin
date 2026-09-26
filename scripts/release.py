@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rehearse a private source release from clean HEAD; never tag or publish."""
+"""Rehearse a source release from clean HEAD; never tag or publish a release."""
 import argparse
 import gzip
 import hashlib
@@ -34,8 +34,8 @@ def main():
         raise SystemExit('Unsafe or empty package paths')
     tracked = git('ls-tree', '-r', '--name-only', commit).decode().splitlines()
     license_present = 'LICENSE' in tracked
-    if license_present and 'LICENSE' not in paths:
-        raise SystemExit('Add LICENSE to build.zig.zon package paths before packaging')
+    if not license_present or 'LICENSE' not in paths:
+        raise SystemExit('A tracked LICENSE must be included in build.zig.zon package paths')
     toolchain = subprocess.run([args.zig, 'version'], capture_output=True, text=True, check=True).stdout.strip()
     if toolchain != '0.16.0':
         raise SystemExit('Release rehearsal requires Zig 0.16.0')
@@ -74,7 +74,7 @@ def main():
         raise SystemExit('Consumer results or package hashes disagree')
     report['passed'] = True
     report_path.write_text(json.dumps(report, indent=2)+'\n')
-    print(f'Private rehearsal passed: {archive}\nSHA256: {digest}\nLicense present: {license_present}')
+    print(f'Rehearsal passed: {archive}\nSHA256: {digest}\nLicense present: {license_present}')
 
 
 if __name__ == '__main__':

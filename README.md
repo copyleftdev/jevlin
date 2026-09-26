@@ -72,4 +72,4 @@ and retries can incur additional charges. The SDK does not read credential files
 - [Changelog](CHANGELOG.md) and [release preparation](docs/releases.md).
 
 Still pre-release. Dynamic schemas, model discovery, and connection pooling are
-not implemented. License selection is pending.
+not implemented. Licensed under [MIT](LICENSE).

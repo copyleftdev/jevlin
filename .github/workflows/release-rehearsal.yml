@@ -1,4 +1,4 @@
-name: Jevlin private release rehearsal
+name: Jevlin release rehearsal
 on:
   workflow_dispatch:
 permissions:
@@ -23,7 +23,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: private-release-${{ github.sha }}
+          name: release-rehearsal-${{ github.sha }}
           path: release-dist/
           if-no-files-found: warn
           retention-days: 30

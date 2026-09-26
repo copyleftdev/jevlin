@@ -2,6 +2,8 @@
 
 ## Unreleased — 0.1.0-dev
 
+- MIT license, included in source packages and required by the release rehearsal.
+
 - Native TLS certificate and allocation-recovery checks on Linux, macOS, and
   Windows; Windows system-root loading releases certificate contexts on OOM
   instead of triggering Zig 0.16.0's store-close assertion.
@@ -18,8 +20,8 @@
   transport fault recovery, Linux TLS fixtures, and manually triggered soak runs.
 - Native Linux, macOS, and Windows Debug/ReleaseSafe CI and independent packaged
   consumers with API compatibility checks.
-- Private source-archive rehearsal with SHA-256 checksums and reproducibility
-  checks. No public release or license has been selected yet.
+- Source-archive rehearsal with SHA-256 checksums and reproducibility
+  checks. The repository is public; no versioned release has been published yet.
 
 Coverage-guided parser and encoder campaigns now run with LLVM and a scoped
 error-return-tracing workaround on unmodified Zig 0.16.0. Reports, crash capture,

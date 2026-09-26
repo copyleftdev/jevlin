@@ -34,4 +34,4 @@ external network, or billable API requests are needed. Public registry delivery,
 release archive URLs, and live service behavior are separate release checks.
 
 Cross-compilation of the example is useful additional evidence, but cannot
-replace native tests. The repository remains private until release is approved.
+replace native tests. The repository is public; versioned releases are separate.
